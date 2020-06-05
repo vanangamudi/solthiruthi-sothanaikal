@@ -48,9 +48,6 @@ def split_uyirmei(string):
 def build_freqdict(filepath, ngram_size=2, line_limit=100000, offset=1000):
     def ngram_zipper(letters, size=2):
         return [letters[i:] for i in range(size)]
-
-    def ngram_window(letters, start, size=2):
-        return ''.join( sletters [ start : start+size ] )
         
     counter = defaultdict(Counter)
     with open(filepath) as f:
@@ -67,18 +64,13 @@ def build_freqdict(filepath, ngram_size=2, line_limit=100000, offset=1000):
                 log.debug('len:  oletters/sletters: {}/{}'.format(
                     len(oletters),
                     len(sletters)))
-                #print(ngram_zipper(sletters, ngram_size))
+
+                
                 for i, ngram in enumerate(
                         zip(*ngram_zipper(sletters, ngram_size))
                 ):
                     
-                    window = ngram_window(sletters, i, ngram_size)
-                    log.debug(
-                        'window: {}, ngram: {}'.format(
-                            window,
-                            ''.join(ngram)))
-                              
-                    counter[ window ] [i - len(sletters)] += 1 
+                    counter[ ''.join(ngram) ] [i - len(sletters)] += 1 
                 
     return counter
 
