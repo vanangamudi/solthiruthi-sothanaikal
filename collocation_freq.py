@@ -45,22 +45,40 @@ def split_uyirmei(string):
     return ''.join(letters)
 
 
-def build_freqdict(filepath, line_limit=1000):
+def build_freqdict(filepath, ngram_size=2, line_limit=100000, offset=1000):
+    def ngram_zipper(letters, size=2):
+        return [letters[i:] for i in range(size)]
+
+    def ngram_window(letters, start, size=2):
+        return ''.join( sletters [ start : start+size ] )
+        
     counter = defaultdict(Counter)
     with open(filepath) as f:
-        for line in tqdm(f.readlines()[:line_limit]):
+        for line in tqdm(f.readlines()[offset:line_limit+offset]):
             for word in line.split():
-                rword = list(reversed(
-                    utf8.get_letters(
-                        split_uyirmei(word))))
-                for i, (p, q, r, s) in enumerate(
-                        zip(rword, rword[1:], rword[2:], rword[3:])
-                ):
+                oletters = utf8.get_letters(
+                    word
+                )
+                sletters = utf8.get_letters(
+                    split_uyirmei(word)
+                )
 
-                    window = ''.join(reversed(
-                        list( reversed(word) ) [ i : (i+1)*4 ]
-                    ))
-                    counter[ window ] [i] += 1 
+                log.debug('word: {}'.format(word))
+                log.debug('len:  oletters/sletters: {}/{}'.format(
+                    len(oletters),
+                    len(sletters)))
+                #print(ngram_zipper(sletters, ngram_size))
+                for i, ngram in enumerate(
+                        zip(*ngram_zipper(sletters, ngram_size))
+                ):
+                    
+                    window = ngram_window(sletters, i, ngram_size)
+                    log.debug(
+                        'window: {}, ngram: {}'.format(
+                            window,
+                            ''.join(ngram)))
+                              
+                    counter[ window ] [i - len(sletters)] += 1 
                 
     return counter
 
@@ -70,5 +88,22 @@ if __name__ == '__main__':
     'போன்றself'
     ))
 
-    freq = build_freqdict('/home/vanangamudi/data/datasets/text/tamiltext-6M-10lines.txt')
+    freq = build_freqdict(
+        filepath = '/home/vanangamudi/data/datasets/text/tamiltext-6M-10lines.txt',
+        ngram_size = 3,
+        line_limit = 100,
+    )
+    
     pprint(freq)
+    pprint(
+        [
+            ':'.join(str(j) for j in i) for i in  sorted(
+                [(k, sum(v.values())) for k,v in freq.items()],
+                key=lambda x: x[1]
+            )
+        ]
+    )
+
+
+
+    
