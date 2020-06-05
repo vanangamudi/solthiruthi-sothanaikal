@@ -1,8 +1,13 @@
 #** coding: utf-8 **
 
+import logging
+from pprint import pprint, pformat
+log = logging.getLogger(__name__)
+logging.basicConfig()
+log.setLevel(logging.DEBUG)
+
 from tamil import utf8
 from tqdm import tqdm
-from pprint import pprint, pformat
 from collections import Counter, defaultdict
 UYIRMEI_MAP_FILEPATH = 'uyir-mei.csv'
 
