@@ -1,0 +1,4 @@
+* SymSpell for Tamil
+Spellcheck algorithm adapted for Tamil language. The code is directly adapted from Python implementation of SymSpell algorithm proposed by Wolf. Original implementation is in C#
+
+The algorithms does a clever trick of flipping the problem on its head. Instead of doing the edits every single time, it precomputes all the variations of mistakes before hand. Though this increases memory consumption, the performace orders of magnitude better. 
