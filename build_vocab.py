@@ -1,5 +1,6 @@
 #** coding: utf-8 **
 import os
+import gzip
 import sys
 import logging
 from pprint import pprint, pformat
@@ -14,7 +15,7 @@ def count_words(filepath, counter=None):
     if counter == None:
         counter = Counter()
 
-    with open(filepath) as f:
+    with gzip.open(filepath) as f:
         for line_num, line in enumerate(tqdm(f)):
             try:
                 counter.update(line.strip().split())
@@ -27,7 +28,7 @@ def write_counter_tsv(filepath, counter):
     if not counter:
         return
     
-    with open(filepath, 'w') as f:
+    with gzip.open(filepath, 'w') as f:
         for word, count in sorted(counter.items(), key=lambda x: -x[1]):
             f.write('{}\t{}\n'.format(word, count))
     

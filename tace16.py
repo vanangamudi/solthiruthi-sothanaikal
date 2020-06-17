@@ -14,7 +14,7 @@ CsvRecord = namedtuple('CsvRecord', ['letter', 'valid', 'tace16',
                                      'unicode21', 'unicode22', 'unicode23',
                                      'utf8_tace16_addend'])
 
-def read_csv(filename='data_new.csv'):
+def read_csv(filename='data/utf8-tace16-map.csv'):
     records = [i for i in csv.reader(open(filename), delimiter='|')]
     conversion_map = {}
     tace16_letter_map,  letter_tace16_map = {}, {}
@@ -24,7 +24,7 @@ def read_csv(filename='data_new.csv'):
 
 
     for record in records[1:]:
-        print(record)
+        log.debug('record: ' + pformat(record))
         record = CsvRecord._make(record)
         tace16 = int(record.tace16, base=16)
 
@@ -47,7 +47,7 @@ def read_csv(filename='data_new.csv'):
                 unicode_list.add(tuple(unicode1))
                 unicode_list.add(tuple(unicode2))
                 vowel_ops[tuple(unicode2)] = int(record.utf8_tace16_addend)
-                print(vowel_ops)
+                log.debug('vowel_ops' + pformat(vowel_ops))
             else:
                 conversion_map[tace16] = (unicode1,)
                 unicode_list.add(tuple(unicode1))

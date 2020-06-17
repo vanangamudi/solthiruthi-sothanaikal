@@ -6,6 +6,7 @@ log = logging.getLogger(__name__)
 logging.basicConfig()
 log.setLevel(logging.DEBUG)
 
+import gzip
 from tamil import utf8
 from tqdm import tqdm
 from collections import Counter, defaultdict
@@ -14,7 +15,7 @@ UYIRMEI_MAP_FILEPATH = 'uyir-mei.csv'
 def read_uyirmei_map():
     uyirmei_map = {}
     uyirmei_map_reverse = {}
-    with open(UYIRMEI_MAP_FILEPATH) as f:
+    with gzip.open(UYIRMEI_MAP_FILEPATH) as f:
         for line in f.readlines()[1:]:
             letter, mei, uyir = line.strip().split('|')
 
@@ -50,7 +51,7 @@ def build_freqdict(filepath, ngram_size=2, line_limit=100000, offset=1000):
         return [letters[i:] for i in range(size)]
         
     counter = defaultdict(Counter)
-    with open(filepath) as f:
+    with gzip.open(filepath) as f:
         for line in tqdm(f.readlines()[offset:line_limit+offset]):
             for word in line.split():
                 oletters = utf8.get_letters(
