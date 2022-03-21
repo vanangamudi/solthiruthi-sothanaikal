@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
 from pprint import pprint, pformat
 import pdb
-
+from tqdm import tqdm
+from tamil.utf8 import get_letters
 class Node(object):
 
     def __repr__(self):
-        return "Node({}, {}, {}, {})\n{}".format(
-            self.value,
-            self.count,
-            self.children,
-            self.is_complete,
-            ' ' * self.level)
+        if self.level < 160:
+            return "Node({}, {}, {})\n{} {}".format(
+                ''.join(self.value) if self.value else self.value,
+                self.count,
+                self.is_complete,
+                '\t' * self.level,
+                self.children,)
+        else:
+            return ''
 
     def __str__(self):
         return self.__repr__()
@@ -51,9 +55,6 @@ class Trie(object):
 
             node.is_complete = True
 
-                
-
-
     def find_prefix(self, prefix, default=None):
         i = 0
         prev_node = node = self.root
@@ -73,7 +74,7 @@ class Trie(object):
             return node.is_complete
 
     def get_all_suffixes(self, prefix):
-        pdb.set_trace()
+
         suffixes = []
         node, level = self.find_prefix(prefix)
         if len(prefix):
@@ -99,3 +100,14 @@ if __name__ == '__main__':
     pprint (trie)
     pprint (trie.find_prefix("hey"))
     pprint (trie.get_all_suffixes("h"))
+
+    tamil_trie = Trie()
+    with open('../chorkuviyal/output.csv') as f:
+        for line in tqdm(f):
+            token, count = line.split(',')
+            if token:
+                tamil_trie.add(get_letters(token))
+
+
+    with open('tamil_trie_output.txt', 'w') as of:
+        of.write(pformat(tamil_trie))
