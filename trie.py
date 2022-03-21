@@ -5,8 +5,9 @@ import pdb
 class Node(object):
 
     def __repr__(self):
-        return "Node({}, {}, {})\n{}".format(
+        return "Node({}, {}, {}, {})\n{}".format(
             self.value,
+            self.count,
             self.children,
             self.is_complete,
             ' ' * self.level)
@@ -14,9 +15,9 @@ class Node(object):
     def __str__(self):
         return self.__repr__()
 
-    def __init__(self, value=None, level=0):
+    def __init__(self, value=None, count=1, level=0):
         self.value = value
-        self.count = 0
+        self.count = count
         self.children = {}
         self.is_complete = False
         self.level = level
@@ -33,13 +34,25 @@ class Trie(object):
     def add(self, item):
         node, i = self.find_prefix(item)
         if i < len(item):
+            #increment count
+            j = 0
+            tnode = self.root
+            while j < i:
+                tnode.children[item[j]].count += 1
+                tnode = tnode.children[item[j]]
+                j += 1
+                
+            # add new nodes
             while i < len(item):
-                new_node = Node(item[:i+1], level=i+1)
+                new_node = Node(item[:i+1], count=1, level=i+1)
                 node.children[item[i]] = new_node
                 node = new_node
                 i += 1
 
             node.is_complete = True
+
+                
+
 
     def find_prefix(self, prefix, default=None):
         i = 0
