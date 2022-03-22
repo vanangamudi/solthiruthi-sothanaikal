@@ -1,5 +1,5 @@
 
-from Levenshtein import distance as levenshtein_distance
+from edit_distance import levenshtein
 from tqdm import tqdm
 from tamil.utf8 import get_letters
 from collections import deque
@@ -13,6 +13,10 @@ class BKTree:
         self._tree = None
         self._distance_func = distance_func
 
+    def distance_func(self, node, candidate):
+        return self._distance_func(get_letters(node),
+                                   get_letters(candidate))
+        
     def add(self, node):
         if self._tree is None:
             self._tree = (node, {})
@@ -20,7 +24,7 @@ class BKTree:
 
         current, children = self._tree
         while True:
-            dist = self._distance_func(node, current)
+            dist = self.distance_func(node, current)
             target = children.get(dist)
             if target is None:
                 children[dist] = (node, {})
@@ -35,7 +39,7 @@ class BKTree:
         result = []
         while candidates:
             candidate, children = candidates.popleft()
-            dist = self._distance_func(node, candidate)
+            dist = self.distance_func(node, candidate)
             if dist <= radius:
                 result.append((dist, candidate))
 
@@ -49,8 +53,8 @@ class BKTree:
     
 if __name__ == '__main__':
 
-    tree = BKTree(levenshtein_distance)
-    with open('../chorkuviyal/output.csv') as f:
+    tree = BKTree(levenshtein)
+    with open('../chorkuviyal/output.22mar22.csv') as f:
         for line in tqdm(f):
             token, count = line.split(',')
             if token:
