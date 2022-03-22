@@ -56,7 +56,27 @@ class TamilBKTree(BKTree):
         return super().distance_func(node, candidate)
 
 
+def build_bktree(filepaths,
+                pbarp = False):
     
+    tree = TamilBKTree(levenshtein)
+    for filepath in filepaths:
+        print('loading {}...'.format(filepath))
+        if pbarp:
+            pbar = tqdm.tqdm(open(filepath), ncols=100)
+        else:
+            pbar = open(filepath)
+
+        for item in pbar:
+            token, count = item.split(',')
+            if token:
+                tree.add(token)
+                if pbarp:
+                    pbar.set_description(token)
+
+
+    return tree
+
 if __name__ == '__main__':
 
     tree = TamilBKTree(levenshtein)

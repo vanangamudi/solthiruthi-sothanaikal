@@ -51,7 +51,8 @@ class Trie(object):
                 
             # add new nodes
             while i < len(item):
-                new_node = Node(item[:i+1], count=1, level=i+1)
+                #new_node = Node(item[:i+1], count=1, level=i+1)
+                new_node = Node(item[i], count=1, level=i+1)
                 node.children[item[i]] = new_node
                 node = new_node
                 i += 1
@@ -96,6 +97,27 @@ class Trie(object):
     def words(self):
         return self.get_all_suffixes(self.root)
 
+def build_trie(filepaths,
+                pbarp = False):
+    
+    trie = Trie()
+    for filepath in filepaths:
+        print('loading {}...'.format(filepath))
+        if pbarp:
+            pbar = tqdm.tqdm(open(filepath), ncols=100)
+        else:
+            pbar = open(filepath)
+
+        for item in pbar:
+            token, count = item.split(',')
+            if token:
+                trie.add(get_letters(token))
+                if pbarp:
+                    pbar.set_description(token)
+
+
+    return trie
+    
 if __name__ == '__main__':
     trie = Trie()
     trie.add("hell")
