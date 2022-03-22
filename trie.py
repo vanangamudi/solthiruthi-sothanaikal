@@ -73,8 +73,10 @@ class Trie(object):
         
     def prefix_exists_p(self, prefix):
         node, index = self.find_prefix(prefix)
-        if node:
-            return node.is_complete
+        if not node == self.root:
+            node = node.children.get(prefix[-1], None)
+            if node:
+                return node.is_complete
 
     def get_all_suffixes(self, prefix):
 
@@ -103,6 +105,14 @@ if __name__ == '__main__':
     pprint (trie)
     pprint (trie.find_prefix("hey"))
     pprint (trie.get_all_suffixes("h"))
+    pprint (trie.prefix_exists_p("hel"))
+    pprint (trie.prefix_exists_p("hell"))
+    pprint (trie.prefix_exists_p("heyl"))
+    pprint (trie.prefix_exists_p("hey"))
+    pprint (trie.prefix_exists_p("tri"))
+    pprint (trie.prefix_exists_p("trie"))
+    pprint (trie.prefix_exists_p("Trie"))
+
 
     tamil_trie = Trie()
     for filepath in DEFAULT_DICTIONARY_FILES:
@@ -116,7 +126,8 @@ if __name__ == '__main__':
     word = input('> ')
     while word:
         print('இருக்குதா? {}'.format(
-            'இருக்கு' if tamil_trie.prefix_exists_p(word) else 'இல்லை'))
+            'இருக்கு' if tamil_trie.prefix_exists_p(get_letters(word)) \
+            else 'இல்லை'))
         
         word = input('> ')
 
