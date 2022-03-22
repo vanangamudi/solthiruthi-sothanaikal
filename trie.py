@@ -3,6 +3,9 @@ from pprint import pprint, pformat
 import pdb
 from tqdm import tqdm
 from tamil.utf8 import get_letters
+
+from resources import DEFAULT_DICTIONARY_FILES
+
 class Node(object):
 
     def __repr__(self):
@@ -102,11 +105,20 @@ if __name__ == '__main__':
     pprint (trie.get_all_suffixes("h"))
 
     tamil_trie = Trie()
-    with open('../chorkuviyal/output.csv') as f:
-        for line in tqdm(f):
-            token, count = line.split(',')
-            if token:
-                tamil_trie.add(get_letters(token))
+    for filepath in DEFAULT_DICTIONARY_FILES:
+        print('loading {}...'.format(filepath))
+        with open(filepath) as f:
+            for line in tqdm(f):
+                token, count = line.split(',')
+                if token:
+                    tamil_trie.add(get_letters(token))
+                    
+    word = input('> ')
+    while word:
+        print('இருக்குதா? {}'.format(
+            'இருக்கு' if tamil_trie.prefix_exists_p(word) else 'இல்லை'))
+        
+        word = input('> ')
 
 
     with open('tamil_trie_output.txt', 'w') as of:
