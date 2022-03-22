@@ -48,21 +48,18 @@
    #+end_src
    
 * Tasks
-  #+begin_src orgmode
-
-
-* NEXT Baseline spellchecking
-** DONE Bloom filter based existence checker
-** DONE Trie based tree builder that encodes all word from dictionary in a trie
-** DONE BKTRee with levenshtein metric to generate suggestions
-**** DONE impl naive levenshtein function to enable tamil char level distance calculation instead of unicode level
-** TODO generate samples from Trie so that the inital letters are preserved
-** NEXT CLI utility to spellcheck files
-** TODO valid character check
-** TODO valid character transition check
-* TODO flask API?
-* TODO browser addon
-  #+end_src  
+** NEXT Baseline spellchecking
+*** DONE Bloom filter based existence checker
+*** DONE Trie based tree builder that encodes all word from dictionary in a trie
+*** DONE BKTRee with levenshtein metric to generate suggestions
+***** DONE impl naive levenshtein function to enable tamil char level distance calculation instead of unicode level
+*** TODO generate samples from Trie so that the inital letters are preserved
+*** NEXT CLI utility to spellcheck files
+*** TODO valid character check
+*** TODO valid character transition check
+** TODO flask API?
+** TODO browser addon
+  
 *  முன்னெடுப்புகள்
 - [[https://github.com/Ezhil-Language-Foundation/open-tamil][Open Tamil - Ezhil Language Foundation]]
 - [[https://github.com/KaniyamFoundation/all_tamil_words][]all tamil words - KaniyamFoundation]]
