@@ -46,6 +46,11 @@
 
 
    #+end_src
+   
+* Tasks
+  #+begin_src orgmode
+
+
 * NEXT Baseline spellchecking
 ** DONE Bloom filter based existence checker
 ** DONE Trie based tree builder that encodes all word from dictionary in a trie
@@ -57,7 +62,7 @@
 ** TODO valid character transition check
 * TODO flask API?
 * TODO browser addon
-  
+  #+end_src  
 *  முன்னெடுப்புகள்
 - [[https://github.com/Ezhil-Language-Foundation/open-tamil][Open Tamil - Ezhil Language Foundation]]
 - [[https://github.com/KaniyamFoundation/all_tamil_words][]all tamil words - KaniyamFoundation]]
