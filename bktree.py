@@ -1,5 +1,5 @@
 
-from edit_distance import levenshtein
+from editdistance import eval as levenshtein
 from tqdm import tqdm
 from tamil.utf8 import get_letters
 from collections import deque
