@@ -59,6 +59,7 @@
 *** TODO valid character transition check
 ** TODO flask API?
 ** TODO browser addon
+** TODO Write tests and build test data
   
 *  முன்னெடுப்புகள்
 - [[https://github.com/Ezhil-Language-Foundation/open-tamil][Open Tamil - Ezhil Language Foundation]]
