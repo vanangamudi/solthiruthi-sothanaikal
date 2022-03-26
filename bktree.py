@@ -48,7 +48,8 @@ class BKTree:
             low, high = dist - radius, dist + radius
             candidates.extend(c for d, c in children.items()
                               if low <= d <= high)
-        return result
+            
+        return sorted(result, key=lambda x: x[0])
 
 class TamilBKTree(BKTree):
     def distance_func(self, node, candidate):
