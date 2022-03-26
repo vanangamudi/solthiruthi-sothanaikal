@@ -4,6 +4,7 @@ import pdb
 from tqdm import tqdm
 from tamil.utf8 import get_letters
 
+import utils
 from resources import DEFAULT_DICTIONARY_FILES
 
 class Node(object):
@@ -104,9 +105,9 @@ def build_trie(filepaths,
     for filepath in filepaths:
         print('loading {}...'.format(filepath))
         if pbarp:
-            pbar = tqdm.tqdm(open(filepath), ncols=100)
+            pbar = tqdm.tqdm(utils.openfile(filepath), ncols=100)
         else:
-            pbar = open(filepath)
+            pbar = utils.openfile(filepath)
 
         for item in pbar:
             token, count = item.split(',')
@@ -139,7 +140,7 @@ if __name__ == '__main__':
     tamil_trie = Trie()
     for filepath in DEFAULT_DICTIONARY_FILES:
         print('loading {}...'.format(filepath))
-        with open(filepath) as f:
+        with utils.openfile(filepath) as f:
             for line in tqdm(f):
                 token, count = line.split(',')
                 if token:
@@ -154,5 +155,5 @@ if __name__ == '__main__':
         word = input('> ')
 
 
-    with open('tamil_trie_output.txt', 'w') as of:
+    with utils.openfile('tamil_trie_output.txt', 'w') as of:
         of.write(pformat(tamil_trie))

@@ -6,6 +6,7 @@ from tamil.utf8 import get_letters
 from collections import deque
 from pprint import pprint, pformat
 
+import utils
 from resources import DEFAULT_DICTIONARY_FILES
 
 class BKTree:
@@ -64,9 +65,9 @@ def build_bktree(filepaths,
     for filepath in filepaths:
         print('loading {}...'.format(filepath))
         if pbarp:
-            pbar = tqdm.tqdm(open(filepath), ncols=100)
+            pbar = tqdm.tqdm(utils.openfile(filepath), ncols=100)
         else:
-            pbar = open(filepath)
+            pbar = utils.openfile(filepath)
 
         for item in pbar:
             token, count = item.split(',')
@@ -84,7 +85,7 @@ if __name__ == '__main__':
 
     for filepath in DEFAULT_DICTIONARY_FILES:
         print('loading {}...'.format(filepath))
-        with open(filepath) as f:
+        with utils.openfile(filepath) as f:
             for line in tqdm(f):
                 token, count = line.split(',')
                 if token:
@@ -99,5 +100,5 @@ if __name__ == '__main__':
 
 
 
-    with open('tamil_tree_output.txt', 'w') as of:
+    with utilsopen('tamil_tree_output.txt', 'w') as of:
         of.write(pformat(tree))

@@ -4,6 +4,7 @@ from random import shuffle
 from tqdm import tqdm
 import tqdm
 
+import utils
 from resources import DEFAULT_DICTIONARY_FILES
 
 BLOOMFILTER_SIZE = 200000 #no of items to add
@@ -20,9 +21,9 @@ def build_bloom(filepaths,
     for filepath in filepaths:
         print('loading {}...'.format(filepath))
         if pbarp:
-            pbar = tqdm.tqdm(open(filepath), ncols=100)
+            pbar = tqdm.tqdm(utils.openfile(filepath), ncols=100)
         else:
-            pbar = open(filepath)
+            pbar = utils.openfile(filepath)
 
         for item in pbar:
             token, count = item.split(',')
