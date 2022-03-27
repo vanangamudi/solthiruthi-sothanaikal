@@ -3,9 +3,10 @@ from pprint import pprint, pformat
 import pdb
 from tqdm import tqdm
 from tamil.utf8 import get_letters
+import csv
 
 import utils
-from resources import DEFAULT_DICTIONARY_FILES
+from resources import DEFAULT_DICTIONARY_FILES, XSV_DELIMITER
 
 class Node(object):
 
@@ -109,8 +110,8 @@ def build_trie(filepaths,
         else:
             pbar = utils.openfile(filepath)
 
-        for item in pbar:
-            token, count = item.split(',')
+        for item in csv.reader(pbar, delimiter=XSV_DELIMITER):
+            token, count = item
             if token:
                 trie.add(get_letters(token))
                 if pbarp:
@@ -141,8 +142,9 @@ if __name__ == '__main__':
     for filepath in DEFAULT_DICTIONARY_FILES:
         print('loading {}...'.format(filepath))
         with utils.openfile(filepath) as f:
-            for line in tqdm(f):
-                token, count = line.split(',')
+            csvf = csv.reader(f, delimiter=XSV_DELIMITER)
+            for line in tqdm(csvf):
+                token, count = line
                 if token:
                     tamil_trie.add(get_letters(token))
                     

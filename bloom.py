@@ -4,8 +4,9 @@ from random import shuffle
 from tqdm import tqdm
 import tqdm
 
+import csv
 import utils
-from resources import DEFAULT_DICTIONARY_FILES
+from resources import DEFAULT_DICTIONARY_FILES, XSV_DELIMITER
 
 BLOOMFILTER_SIZE = 200000 #no of items to add
 BLOOMFILTER_PROB = 0.05 #false positive probability
@@ -25,8 +26,8 @@ def build_bloom(filepaths,
         else:
             pbar = utils.openfile(filepath)
 
-        for item in pbar:
-            token, count = item.split(',')
+        for item in csv.reader(pbar, delimiter=XSV_DELIMITER):
+            token, count = item
             if token:
                 bloom.add(token)
                 if pbarp:
