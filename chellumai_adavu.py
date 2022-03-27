@@ -58,9 +58,9 @@ def read_chellumai(ifilepath):
         ifile = csv.reader(ifile, delimiter=XSV_DELIMITER)
         muthal_vari = next(ifile) #read first line
         arichuvadi = { i:1 for i in muthal_vari[1:] } #[1:] - table, hence top left most is empty
-        print(muthal_vari)
+        #print(muthal_vari)
         for vari in ifile:
-            print(vari)
+            #print(vari)
             j, count = vari[0], vari[1:]
             #pdb.set_trace()
             #print(count)
@@ -93,7 +93,7 @@ def chellumai_eeniyeluthu(args):
 def saripaar(chellumai, thodar):
     thodar = ['^'] + list(thodar) + ['$']
     for idx, (i, j) in enumerate(zip(thodar, thodar[1:])):
-        print(idx, i, j, chellumai[i][j])
+        #print(idx, i, j, chellumai[i][j])
         if chellumai[i][j] <= 0:
             break
 

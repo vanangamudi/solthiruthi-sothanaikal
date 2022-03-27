@@ -8,11 +8,11 @@ from tamil.utf8 import get_letters
 from collections import deque
 from pprint import pprint, pformat
 
-from resources import DEFAULT_DICTIONARY_FILES
+from resources import DEFAULT_DICTIONARY_FILES, CHELLUMAI_ADAVU_FILE
 from bloom import build_bloom
 from trie import build_trie
 from bktree import build_bktree
-
+import chellumai_adavu
 import json
 
 class Thundu:
@@ -20,12 +20,14 @@ class Thundu:
         self.word = word
         self.suggestions = []
         self.correct = False
+        self.error_level = 0
 
     def __json__(self):
         return {
             'word' : self.word,
             'suggestions' : self.suggestions,
-            'correct_p' : self.correct
+            'correct_p' : self.correct,
+            'error_level': self.error_level
         }
     
 
@@ -37,18 +39,28 @@ class Thiruthi:
         self.trie    = build_trie(filepaths)
         self.bktree  = build_bktree(filepaths)
 
+        self.arichuvadi, self.chellumai_adavu = \
+            chellumai_adavu.read_chellumai(CHELLUMAI_ADAVU_FILE)
+        
         self.suggestions_count = suggestions_count
 
     def _thiruthu(self, thundugal):
 
         for thundu in thundugal:
+                
             if thundu.word in self.bloom:
                 thundu.correct = True
+                thundu.error_level = 0
                 continue
 
             if self.trie.prefix_exists_p(thundu.word):
                 thundu.correct = True
+                thundu.error_level = 1
                 continue
+
+            if chellumai_adavu.saripaar(self.chellumai_adavu, thundu.word):
+                thundu.correct = True
+                thundu.error_level = 2
 
             thundu.suggestions.extend(
                 self.bktree.search(thundu.word, 2)[:self.suggestions_count]
