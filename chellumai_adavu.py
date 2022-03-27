@@ -56,16 +56,19 @@ def read_chellumai(ifilepath):
 
         varigal = ifile.readlines()
         arichuvadi = { i:1 for i in varigal[0].strip().split(',')[1:] }
-        #print(varigal[0])
+        print(varigal[0])
         for vari in varigal[1:]:
-            #print(vari)
-            vari = vari.strip(string.punctuation + ' \t\n')
+            print(vari)
+            vari = vari.strip()
             muthal, meethi = vari.split(',', 1)
-            j, count = muthal, meethi.split(',')
+            j, count = muthal.strip('"'), meethi.split(',')
             #pdb.set_trace()
-            #print(count)
+            print(count)
+            if j == '^':
+                pdb.set_trace()
             count = [int(i.strip()) for i in count]
             for idx, i in enumerate(sorted(arichuvadi.keys())):
+                i = i.strip(' "\t\n')
                 chellumai[j][i] = count[idx]
 
     return arichuvadi, chellumai
@@ -97,8 +100,8 @@ def saripaar(chellumai, thodar):
         if chellumai[i][j] <= 0:
             break
 
-    print(idx, len(thodar))
-    return idx >= len(thodar)
+    #print(idx, len(thodar))
+    return idx >= len(thodar) - 2 
         
 
 if __name__ == '__main__':
@@ -156,32 +159,17 @@ if __name__ == '__main__':
         arichuvadi, chellumai = read_chellumai(args.chellumai)
         for vari in args.input:
             for thundu in vari.split():
+                thundu = thundu.strip(string.punctuation)
                 print( '{} {} {}'.format(
                     thundu,
                     saripaar(chellumai, thundu),
                     [i for i in thundu]
                 ),
                        file=args.output)
+
+        thundu = input('> ')
+        while thundu:
+            print(saripaar(chellumai, thundu))
+            thundu = input('> ')
+            
                 
-    exit(0)
-    ifilepath = args.input.split(',') 
-    ofilepath = args.output
-    
-    tokens = []
-    for filepath in ifilepath:
-        tokens.extend(read_tokens(filepath))
-
-    arichuvadi, chellumai = chellumai_eenu(tokens)
-        
-    pprint(sorted(arichuvadi))
-
-    # write and read twice to avoid keys() inexistence due to Counter's behavior
-    write_chellumai(ofilepath, arichuvadi, chellumai)
-    rarichuvadi, rchellumai = read_chellumai(ofilepath)
-    
-    write_chellumai(ofilepath, rarichuvadi, rchellumai)
-    rrarichuvadi, rrchellumai = read_chellumai(ofilepath)
-
-    assert utils.compare_dict(rrchellumai, rchellumai), 'error in read/write'
-
-    pprint(narrukku(arichuvadi, chellumai))
