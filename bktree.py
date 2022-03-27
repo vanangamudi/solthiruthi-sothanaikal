@@ -5,6 +5,7 @@ from tqdm import tqdm
 from tamil.utf8 import get_letters
 from collections import deque
 from pprint import pprint, pformat
+import csv
 
 import utils
 from resources import DEFAULT_DICTIONARY_FILES
