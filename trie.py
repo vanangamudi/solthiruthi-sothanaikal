@@ -4,6 +4,7 @@ import pdb
 from tqdm import tqdm
 from tamil.utf8 import get_letters
 import csv
+import json
 
 import utils
 from resources import DEFAULT_DICTIONARY_FILES, XSV_DELIMITER
@@ -21,6 +22,15 @@ class Node(object):
         else:
             return ''
 
+    def dictify(self):
+        return {
+            'value' : self.value,
+            'children': {k: v.dictify() if type(v) == Node else v for k, v in self.children.items()},
+            'count' : self.count,
+            'is_complete' : self.is_complete,
+            'level' : self.level
+        }
+    
     def __str__(self):
         return self.__repr__()
 
@@ -40,6 +50,9 @@ class Trie(object):
     def __repr__(self):   return self.root.__repr__()
     def __str__(self):    return self.__repr__()
 
+    def json(self):
+        return json.dumps(self.root.dictify(), indent=4, ensure_ascii=False)
+    
     def add(self, item):
         node, i = self.find_prefix(item)
         if i < len(item):
@@ -137,7 +150,10 @@ if __name__ == '__main__':
     pprint (trie.prefix_exists_p("trie"))
     pprint (trie.prefix_exists_p("Trie"))
 
+    with open('outputs/simple-trie.json', 'w') as f:
+        f.write(trie.json())
 
+    exit(0)
     tamil_trie = Trie()
     for filepath in DEFAULT_DICTIONARY_FILES:
         print('loading {}...'.format(filepath))
