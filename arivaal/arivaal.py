@@ -1,53 +1,65 @@
 import sys
 import utils
 import random
-from tkinter import *
 
+import gi
 
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, Pango
 
-class Application:
-
-    def __init__(self, inpath, outpath):
-
+class TextViewWindow(Gtk.Window):
+    def __init__(self, inpath, outpath,):
+        Gtk.Window.__init__(self, title="அரிவாள்")
+        
         self.inpath = inpath
         self.outpath = outpath
 
         self.outfile = open(outpath, 'w')
         self.words = open(inpath).read().split()
-        self._build_gui_()
 
+        self.set_default_size(500, 350)
+
+        self.hbox = Gtk.Box(spacing=6, orientation=Gtk.Orientation.VERTICAL)
+        self.add(self.hbox)
+
+        self.create_textview()
+        self.create_buttons()
+
+        self.outfile.write(self.header_text())
+        
     def __del__(self):
         self.outfile.close()
         
-    def _build_gui_(self):
-        self.root = Tk() 
-        
-        self.root.geometry("600x600")
-        self.root.minsize(height=560)
-        self.root.title("அரிவாள்")
-        
-        self.scrollbar = Scrollbar(self.root)
-        self.scrollbar.pack(side=RIGHT, fill=Y)
-        self.text_box = Text(self.root,  yscrollcommand=self.scrollbar.set)
-        self.text_box.pack(fill=BOTH)
-        
-        self.scrollbar.config(command=self.text_box.yview)
-        
-        self.refresh_button=Button(self.root,
-                                   height=1,
-                                   width=10,
-                                   text='refresh', 
-                                   command=self.on_refresh)
-        
-        self.refresh_button.pack()
+    def create_textview(self):
+        scrolledwindow = Gtk.ScrolledWindow()
+        scrolledwindow.set_hexpand(True)
+        scrolledwindow.set_vexpand(True)
+        self.hbox.pack_start(scrolledwindow, True, True, 0)
 
-    def mainloop(self):
-        self.outfile.write(self.header_text())
-        
-        self.text_box.delete('1.0', 'end')
-        self.text_box.insert('1.0', self.build_text())
+        self.textview = Gtk.TextView()
+        self.textbuffer = self.textview.get_buffer()
+        self.textbuffer.set_text(self.build_text())
+        scrolledwindow.add(self.textview)
 
-        self.root.mainloop()
+    def create_buttons(self):
+        self.button = Gtk.Button.new_with_label("Click Me")
+        self.button.connect("clicked", self.on_refresh)
+        self.hbox.pack_start(self.button, True, True, 0)
+
+    def on_refresh(self, widget):
+        
+        text = self.textbuffer.get_text(self.textbuffer.get_start_iter(),
+                                        self.textbuffer.get_end_iter(),
+                                        True)
+        for line in text.splitlines():
+            line = line.strip()
+            if line:
+                self.outfile.write(line + '\n')
+
+        self.textbuffer.delete(self.textbuffer.get_start_iter(),
+                                        self.textbuffer.get_end_iter())
+        
+        self.textbuffer.set_text(self.build_text())
 
     def sample_words(self, approx_count=10, length=20):
         words = []
@@ -63,30 +75,24 @@ class Application:
         return text
     
     def header_text(self):
-        return '''
+        return \
+'''
 #உள்ளீடு: {inpath}
 #வெளியீடு: {outpath}
 '''.format(inpath = self.inpath,
                    outpath=self.outpath)
-        
-    def on_refresh(self):
-        text = self.text_box.get('1.0', 'end')
-        for line in text.splitlines():
-            line = line.strip()
-            if line:
-                self.outfile.write(line + '\n')
-
-        self.text_box.delete('1.0', 'end')
-        self.text_box.insert('1.0', self.build_text())
 
 
         
 if __name__ == '__main__':
-
+    
     print(sys.argv)
     inpath, outpath = sys.argv[1:]
     
-    app = Application(inpath, outpath)
-    app.mainloop()
+    win = TextViewWindow(inpath, outpath)
+    win.connect("destroy", Gtk.main_quit)
+    win.show_all()
 
-    
+
+    Gtk.main()
+
