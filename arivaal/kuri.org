@@ -1,0 +1,2 @@
+* Random sample - long length words
+Random sample 10 or 15 words (of length > 10, easier to tokenize I suppose) and edit the words text widget, i.e break the each word into separate meaningul subwords and save the content to an output file.
