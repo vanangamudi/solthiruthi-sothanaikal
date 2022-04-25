@@ -22,14 +22,30 @@ class Node(object):
         else:
             return ''
 
-    def dictify(self):
+    def to_dict(self):
         return {
             'value' : self.value,
-            'children': {k: v.dictify() if type(v) == Node else v for k, v in self.children.items()},
+            'children': {k: v.to_dict() if type(v) == Node else v for k, v in self.children.items()},
             'count' : self.count,
             'is_complete' : self.is_complete,
             'level' : self.level
         }
+
+    @classmethod
+    def from_dict(cls, dict_):
+        value = dict_['value']
+        count = dict_['count']
+        level = dict_['level']
+        
+        is_complete = dict_['is_complete']
+        children = dict_['children']        
+
+        node = cls(value, count, level)
+        node.is_complete = is_complete
+
+        node.children = {k: Node.from_dict(v) for k,v in children.items()}
+
+        return node
     
     def __str__(self):
         return self.__repr__()
@@ -41,7 +57,20 @@ class Node(object):
         self.is_complete = False
         self.level = level
         
+    def __eq__(self, other):
+        if not self.value == other.value: return False
+        if not self.count == other.count: return False
+        if not self.level == other.level: return False
+        if not self.is_complete == other.is_complete: return False
 
+        if not len(self.children) == len(other.children): return False
+
+        for child1, child2 in zip(self.children, other.children):
+            if not child1 == child2:
+                return False            
+        
+        return True
+    
 class Trie(object):
 
     def __init__(self):
@@ -51,8 +80,17 @@ class Trie(object):
     def __str__(self):    return self.__repr__()
 
     def json(self):
-        return json.dumps(self.root.dictify(), indent=4, ensure_ascii=False)
-    
+        return json.dumps(self.root.to_dict(), indent=4, ensure_ascii=False)
+
+    def write_to_file(self, path):
+        with open(path, 'w') as f:
+            f.write(self.json())
+
+    def read_from_file(self, path):
+        with open(path) as f:
+            self.root = Node.from_dict(json.load(f))
+
+            
     def add(self, item):
         node, i = self.find_prefix(item)
         if i < len(item):
@@ -108,7 +146,10 @@ class Trie(object):
                 suffixes.append(prefix)
 
         return suffixes
-
+    
+    def __eq__(self, other):
+        return self.root == other.root
+    
     def words(self):
         return self.get_all_suffixes(self.root)
 
@@ -150,9 +191,13 @@ if __name__ == '__main__':
     pprint (trie.prefix_exists_p("trie"))
     pprint (trie.prefix_exists_p("Trie"))
 
-    with open('outputs/simple-trie.json', 'w') as f:
-        f.write(trie.json())
-
+    trie.write_to_file('outputs/simple-trie.json')
+    newtrie = Trie()
+    newtrie.read_from_file('outputs/simple-trie.json')
+    newtrie.write_to_file('outputs/newtrie.json')
+    assert newtrie == trie
+    
+            
     exit(0)
     tamil_trie = Trie()
     for filepath in DEFAULT_DICTIONARY_FILES:
